@@ -1,0 +1,27 @@
+@import "../../theme";
+
+.link {
+  &-action {
+    && {
+      border-radius: 2px;
+      padding: 0 7px;
+
+      color: @white;
+      font-weight: 700;
+      text-transform: uppercase;
+
+      background-color: @primary-color;
+      border-color: @primary-color;
+
+      text-shadow: 0 -1px 0 rgb(0 0 0 / 12%);
+      box-shadow: 0 2px 0 rgb(0 0 0 / 5%);
+
+      &:hover,
+      &:focus {
+        color: @white;
+        border-color: @primary-color-hover;
+        background-color: @primary-color-hover;
+      }
+    }
+  }
+}

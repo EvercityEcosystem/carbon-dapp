@@ -1,0 +1,125 @@
+@import 'antd/lib/style/themes/default.less';
+@import 'antd/dist/antd.less';
+@import 'theme.less';
+
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: #231150;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-RegularIt.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-BoldIt.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-ExtraBoldIt.ttf") format("truetype");
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-LightIt.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-Semibold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-SemiboldIt.ttf") format("truetype");
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-Thin.ttf") format("truetype");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Proxima Nova";
+  src: url("/fonts/ProximaNova-ThinIt.ttf") format("truetype");
+  font-weight: 100;
+  font-style: italic;
+}
+
+html {
+  width:100vw;
+  overflow-x:hidden;
+}
+
+body {
+  font-family: Proxima Nova, sans-serif;
+}
+
+#root {
+  height: 100%;
+  background-color: #eff2f5;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f0f3f5;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: @primary-color;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
