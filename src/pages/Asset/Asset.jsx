@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Container from "../../ui/Container/Container";
-import { Button, Form, Input, Spin } from "antd";
+import {Button, Form, Input, Spin, Statistic} from "antd";
 import { useParams } from "react-router-dom";
 import InputNumber from "../../ui/InputNumber/InputNumber";
 import useEcoRegistry from "../../hooks/useEcoRegistry";
 import usePolkadot from "../../hooks/usePolkadot";
+import styles from "./Aseet.module.less";
+import { CopyOutlined } from "@ant-design/icons";
 
 const Asset = () => {
   const { id } = useParams();
@@ -29,6 +31,20 @@ const Asset = () => {
   };
   return (
     <Container>
+      <div className={styles.info}>
+        <Statistic
+          className={styles.name}
+          title="Asset name"
+          value={metaInfo?.name}
+        />
+        <CopyOutlined
+          className={styles.copyIcon}
+          onClick={() => {
+            navigator.clipboard.writeText(metaInfo?.name);
+            message.success("Asset name copied!");
+          }}
+        />
+      </div>
       <Form
         onFinish={handlePrepay}
         disabled={loading}

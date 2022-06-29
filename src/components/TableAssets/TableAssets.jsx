@@ -5,6 +5,7 @@ import Button from "../../ui/Button/Button";
 import styles from "./TableAssets.module.less";
 import Actions from "../../ui/Actions/Actions";
 import classnames from "classnames";
+import Link from "../../ui/Link/Link";
 
 const TableAssets = ({
   assets,
@@ -40,6 +41,9 @@ const TableAssets = ({
           <ExternalLink view="action" href={url}>
             View
           </ExternalLink>
+          <Link view="action" to={`${asset.id}`}>
+            Meta
+          </Link>
           {isCustodian && (
             <Button view="action" onClick={() => onMint(asset.id)}>
               Mint
