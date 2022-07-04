@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Container from "../../ui/Container/Container";
-import {Button, Form, Input, Spin, Statistic} from "antd";
+import { Button, Form, Input, message, Spin, Statistic } from "antd";
 import { useParams } from "react-router-dom";
 import InputNumber from "../../ui/InputNumber/InputNumber";
 import useEcoRegistry from "../../hooks/useEcoRegistry";
@@ -16,17 +16,20 @@ const Asset = () => {
 
   useEffect(() => {
     if (isAPIReady) {
-      fetchMetadataAsset(id).then(metadata => {
+      fetchMetadataAsset(id).then((metadata) => {
         setMetaInfo(metadata);
       });
     }
   }, [id, isAPIReady]);
 
-  const handlePrepay = async values => {
+  const handleSave = async ({ serialNumber, amountUnits }) => {
+    const projectId = metaInfo.name.replace(/Evercity_SC_(\d+)_\w+/i, "$1");
     await pinProjectToIPFS({
+      projectId,
+      serial_number: serialNumber,
+      amount_of_units: amountUnits,
       asset_id: id,
       asset_name: metaInfo.name,
-      ...values,
     });
   };
   return (
@@ -46,42 +49,34 @@ const Asset = () => {
         />
       </div>
       <Form
-        onFinish={handlePrepay}
+        onFinish={handleSave}
         disabled={loading}
         labelAlign="left"
         labelCol={{ span: 14 }}
-        wrapperCol={{ span: 10 }}>
+        wrapperCol={{ span: 10 }}
+      >
         <Form.Item
           label="Serial number"
-          name="serial_number"
+          name="serialNumber"
           required
           rules={[
             {
               required: true,
             },
-          ]}>
+          ]}
+        >
           <Input />
         </Form.Item>
         <Form.Item
-          label="Project ID"
-          name="project_id"
-          required
-          rules={[
-            {
-              required: true,
-            },
-          ]}>
-          <InputNumber />
-        </Form.Item>
-        <Form.Item
           label="Amount of carbon units"
-          name="amount_carbon_units"
+          name="amountUnits"
           required
           rules={[
             {
               required: true,
             },
-          ]}>
+          ]}
+        >
           <InputNumber />
         </Form.Item>
         <Form.Item wrapperCol={{ span: 24 }}>

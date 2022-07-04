@@ -1,5 +1,5 @@
 {
-  "name": "ecoregistry",
+  "name": "evercity-tokenizer",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -42,7 +42,7 @@
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react": "^7.30.1",
     "husky": "^8.0.0",
     "less": "^4.1.3",
     "lint-staged": "^13.0.0",

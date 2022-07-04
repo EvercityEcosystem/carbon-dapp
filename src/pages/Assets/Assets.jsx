@@ -11,6 +11,7 @@ import FormMintAsset from "../../components/FormMintAsset/FormMintAsset";
 import FormBurnAsset from "../../components/FormBurnAsset/FormBurmAsset";
 import { FireOutlined, SendOutlined } from "@ant-design/icons";
 import FormTransferAsset from "../../components/FormTransferAsset/FormTransferAsset";
+import FormCreateAsset from "../../components/FormCreateAsset/FormCreateAsset";
 
 const Assets = () => {
   const {
@@ -31,6 +32,7 @@ const Assets = () => {
   const [formBurn] = Form.useForm();
   const [formMint] = Form.useForm();
   const [formTransfer] = Form.useForm();
+  const [formCreate] = Form.useForm();
 
   useEffect(() => {
     if (isAPIReady) {
@@ -44,25 +46,42 @@ const Assets = () => {
     }
     return (
       polkadotState?.assets?.filter(
-        asset =>
+        (asset) =>
           asset.list_accounts.includes(address) || asset.owner === address,
       ) || []
     );
   }, [address, polkadotState, isCustodian]);
 
   const handleRequest = async () => {
-    await createNewAsset();
+    modal.confirm({
+      title: "Create a new asset",
+      onOk: (close) => {
+        formCreate.validateFields().then(() => {
+          close();
+          formCreate.submit();
+        });
+      },
+      onCancel: () => formCreate.resetFields(),
+      content: (
+        <FormCreateAsset
+          form={formCreate}
+          onSubmit={({ projectId, vintageName }) => {
+            createNewAsset({ projectId, vintageName });
+          }}
+        />
+      ),
+    });
   };
 
-  const handleMint = assetId => {
+  const handleMint = (assetId, assetName) => {
     modal.confirm({
-      onOk: close => {
+      onOk: (close) => {
         formMint.validateFields().then(() => {
           close();
           formMint.submit();
         });
       },
-      title: `Mint asset with ID ${assetId}`,
+      title: `Mint ${assetName} asset`,
       onCancel: () => formMint.resetFields(),
       content: (
         <FormMintAsset
@@ -77,9 +96,9 @@ const Assets = () => {
   };
   const handleBurn = (assetId, accounts) => {
     modal.confirm({
-      title: `Burn asset with ID ${assetId}`,
+      title: `Burn asset`,
       icon: <FireOutlined />,
-      onOk: close => {
+      onOk: (close) => {
         formBurn.validateFields().then(() => {
           close();
           formBurn.submit();
@@ -104,11 +123,11 @@ const Assets = () => {
     });
   };
 
-  const handleTransfer = assetId => {
+  const handleTransfer = (assetId) => {
     modal.confirm({
-      title: `Transfer asset with ID ${assetId}`,
+      title: `Transfer asset`,
       icon: <SendOutlined />,
-      onOk: close => {
+      onOk: (close) => {
         formTransfer.validateFields().then(() => {
           close();
           formTransfer.submit();

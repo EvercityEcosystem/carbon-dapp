@@ -5,8 +5,9 @@ import { transactionCallback } from "../utils/notify";
 import { getCurrentUser } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 import { blake2AsHex } from "@polkadot/util-crypto";
+import { formatUnits } from "../utils/converters";
 
-const bindKeys = keys => data =>
+const bindKeys = (keys) => (data) =>
   data.map(([option, value]) => {
     const record = {};
     keys.forEach((key, index) => {
@@ -33,7 +34,7 @@ const usePolkadot = () => {
   const { api, injector, custodian } = polkadotState;
 
   const toggleLoading = useCallback(() => {
-    setLoading(prev => !prev);
+    setLoading((prev) => !prev);
   }, [setLoading]);
 
   const isAPIReady = useMemo(
@@ -42,7 +43,7 @@ const usePolkadot = () => {
   );
   const connectAPI = async () => {
     const api = await connect();
-    api.on("error", error => {
+    api.on("error", (error) => {
       console.error("API error: ", error);
     });
 
@@ -66,7 +67,7 @@ const usePolkadot = () => {
   }, [connectAPI, setInjector, dispatch]);
 
   const fetchCustodian = useCallback(() => {
-    api.query.carbonAssets.custodian().then(custodian => {
+    api.query.carbonAssets.custodian().then((custodian) => {
       dispatch({
         type: "setCustodian",
         payload: custodian.toHuman(),
@@ -74,48 +75,57 @@ const usePolkadot = () => {
     });
   }, [api]);
 
-  const createNewAsset = useCallback(async () => {
-    const { address } = getCurrentUser();
-    toggleLoading();
-    try {
-      await api.tx.carbonAssets.create().signAndSend(
-        address,
-        {
-          signer: injector.signer,
-          nonce: -1,
-        },
-        transactionCallback(`Create new asset`, block => {
-          block.events.forEach(({ event: { data, method, section } }) => {
-            if (
-              section === "carbonAssets" &&
-              method === "Created" &&
-              String(data.creator.toHuman()) === String(address)
-            ) {
-              toggleLoading();
-              navigate(`${data.assetId.toNumber()}`);
-            }
-          });
-        }),
-      );
-    } catch (e) {
+  const createNewAsset = useCallback(
+    async ({ projectId, vintageName }) => {
+      const { address } = getCurrentUser();
       toggleLoading();
-      console.log(e);
-    }
-  }, [api, navigate, toggleLoading]);
+      try {
+        const transformedName = `Evercity_SC_${projectId}_${vintageName}`;
+        const transformedSymbol = `EVR_SC_${projectId}_${vintageName}`;
+        await api.tx.carbonAssets
+          .create(transformedName, transformedSymbol)
+          .signAndSend(
+            address,
+            {
+              signer: injector.signer,
+              nonce: -1,
+            },
+            transactionCallback(`Create new asset`, (block) => {
+              block.events.forEach(({ event: { data, method, section } }) => {
+                if (
+                  section === "carbonAssets" &&
+                  method === "Created" &&
+                  String(data.creator.toHuman()) === String(address)
+                ) {
+                  toggleLoading();
+                  navigate(`${data.assetId}`);
+                }
+              });
+            }),
+          );
+      } catch (e) {
+        toggleLoading();
+        console.log(e);
+      }
+    },
+    [api, navigate, toggleLoading],
+  );
 
   const fetchMetadataAsset = useCallback(
-    id =>
-      api.query.carbonAssets.metadata(id).then(metadata => metadata.toHuman()),
+    (id) =>
+      api.query.carbonAssets
+        .metadata(id)
+        .then((metadata) => metadata.toHuman()),
     [api],
   );
 
   const setProjectData = useCallback(
-    async ({ asset_id, url, project }) => {
+    async ({ assetId, url, project }) => {
       const { address } = getCurrentUser();
       const projectHash = blake2AsHex(JSON.stringify(project));
       try {
         await api.tx.carbonAssets
-          .setProjectData(Number(asset_id), url, projectHash)
+          .setProjectData(assetId, url, projectHash)
           .signAndSend(address, {
             signer: injector.signer,
             nonce: -1,
@@ -132,6 +142,7 @@ const usePolkadot = () => {
     const assetsResponse = await api.query.carbonAssets.asset
       .entries()
       .then(bindKeys(["id"]));
+
     const metaDataResponse = await api.query.carbonAssets.metadata
       .entries()
       .then(bindKeys(["id"]));
@@ -143,18 +154,18 @@ const usePolkadot = () => {
       .entries()
       .then(bindKeys(["account", "id"]));
 
-    const assets = assetsResponse.map(asset => {
+    const assets = assetsResponse.map((asset) => {
       const metadata = metaDataResponse.find(
-        metadata => metadata.id === asset.id,
+        (metadata) => metadata.id === asset.id,
       );
       const balanceRerord = balanceAssets.find(
-        balance => balance.account === address && balance.id === asset.id,
+        (balance) => balance.account === address && balance.id === asset.id,
       );
       const accounts = balanceAssets
-        .filter(balance => balance.id === asset.id)
-        .map(balance => balance.account);
+        .filter((balance) => balance.id === asset.id)
+        .map((balance) => balance.account);
       const certificateRecord = burnCertificates.find(
-        certificate =>
+        (certificate) =>
           certificate.id === asset.id && certificate.account === address,
       );
 
@@ -162,6 +173,8 @@ const usePolkadot = () => {
         list_accounts: accounts,
         certificates: certificateRecord?.value || 0,
         balance: balanceRerord?.balance || 0,
+        name: metadata.name,
+        symbol: metadata.symbol,
         url: metadata.url,
         ...asset,
       };
@@ -175,9 +188,9 @@ const usePolkadot = () => {
   const mintAsset = useCallback(
     async ({ id, amount }) => {
       const { address } = getCurrentUser();
-      console.log({ id, amount });
+      const formattedAmount = formatUnits(amount);
       try {
-        await api.tx.carbonAssets.mint(id, amount).signAndSend(
+        await api.tx.carbonAssets.mint(id, formattedAmount).signAndSend(
           address,
           {
             signer: injector.signer,
@@ -197,7 +210,8 @@ const usePolkadot = () => {
   const burnAsset = useCallback(
     ({ id, account, amount }) => {
       const { address } = getCurrentUser();
-      api.tx.carbonAssets.burn(id, account, amount).signAndSend(
+      const formattedAmount = formatUnits(amount);
+      api.tx.carbonAssets.burn(id, account, formattedAmount).signAndSend(
         address,
         {
           signer: injector.signer,
@@ -214,7 +228,8 @@ const usePolkadot = () => {
   const selfBurnAsset = useCallback(
     ({ id, amount }) => {
       const { address } = getCurrentUser();
-      api.tx.carbonAssets.selfBurn(id, amount).signAndSend(
+      const formattedAmount = formatUnits(amount);
+      api.tx.carbonAssets.selfBurn(id, formattedAmount).signAndSend(
         address,
         {
           signer: injector.signer,
@@ -238,18 +253,21 @@ const usePolkadot = () => {
 
   const transferAsset = useCallback(
     async ({ id, account, amount }) => {
+      const formattedAmount = formatUnits(amount);
       const { address } = getCurrentUser();
       try {
-        await api.tx.carbonAssets.transfer(id, account, amount).signAndSend(
-          address,
-          {
-            signer: injector.signer,
-            nonce: -1,
-          },
-          transactionCallback("Transfer carbon asset", () => {
-            fetchAssets();
-          }),
-        );
+        await api.tx.carbonAssets
+          .transfer(id, account, formattedAmount)
+          .signAndSend(
+            address,
+            {
+              signer: injector.signer,
+              nonce: -1,
+            },
+            transactionCallback("Transfer carbon asset", () => {
+              fetchAssets();
+            }),
+          );
       } catch (e) {
         console.log(e);
       }

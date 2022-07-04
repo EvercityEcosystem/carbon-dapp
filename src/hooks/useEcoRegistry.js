@@ -26,18 +26,18 @@ const useEcoRegistry = () => {
   const { setProjectData } = usePolkadot();
 
   const fetchProject = useCallback(
-    id =>
+    (id) =>
       fetch(`${ECOREGISTRY_API}/project/public/${id}`, {
         headers: {
           platform: "ecoregistry",
           ln: "eng",
         },
-      }).then(res => res.json()),
+      }).then((res) => res.json()),
     [],
   );
 
   const pinJSONToIPFS = useCallback(
-    body =>
+    (body) =>
       fetch(`${PINATA_URI}/pinning/pinJSONToIPFS`, {
         method: "POST",
         headers: {
@@ -46,8 +46,8 @@ const useEcoRegistry = () => {
         },
         body: JSON.stringify(body),
       })
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.error) {
             notification.error({
               message: data.error.reason,
@@ -61,27 +61,30 @@ const useEcoRegistry = () => {
     [],
   );
 
-  const pinProjectToIPFS = async ({ project_id, asset_id, ...values }) => {
+  const pinProjectToIPFS = async ({ projectId, assetId, ...values }) => {
     dispatch({
       type: "setLoading",
       payload: true,
     });
-    const projectFromRegistry = await fetchProject(project_id);
+    const projectFromRegistry = await fetchProject(projectId);
 
     if (projectFromRegistry?.codeMessages?.[0]) {
       notification.error({
         message: projectFromRegistry.codeMessages[0].codeMessage,
       });
     }
-    const project = { ...projectFromRegistry, ...values };
+    const project = {
+      ...projectFromRegistry,
+      ...values,
+    };
     const url = await pinJSONToIPFS(project);
     dispatch({
       type: "setUrl",
       payload: url,
     });
-    await setProjectData({ asset_id, url, project });
+    await setProjectData({ assetId, url, project });
     notification.success({
-      message: `${asset_id} was pined to IPFS`,
+      message: `${values.asset_name} was pined to IPFS`,
     });
     dispatch({
       type: "setLoading",

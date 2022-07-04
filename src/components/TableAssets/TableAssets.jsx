@@ -6,6 +6,7 @@ import styles from "./TableAssets.module.less";
 import Actions from "../../ui/Actions/Actions";
 import classnames from "classnames";
 import Link from "../../ui/Link/Link";
+import { parseUnits } from "../../utils/converters";
 
 const TableAssets = ({
   assets,
@@ -17,20 +18,24 @@ const TableAssets = ({
 }) => {
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
+      title: "Symbol",
+      dataIndex: "symbol",
+      className: styles.cell,
     },
     {
       title: "Supply",
       dataIndex: "supply",
+      render: (supply) => parseUnits(supply),
     },
     {
       title: "Balance",
       dataIndex: "balance",
+      render: (balance) => parseUnits(balance),
     },
     {
       title: "Certificates",
       dataIndex: "certificates",
+      render: (balance) => parseUnits(balance),
     },
     {
       title: "Actions",
@@ -45,20 +50,22 @@ const TableAssets = ({
             Meta
           </Link>
           {isCustodian && (
-            <Button view="action" onClick={() => onMint(asset.id)}>
+            <Button view="action" onClick={() => onMint(asset.id, asset.name)}>
               Mint
             </Button>
           )}
           <Button
             view="action"
             onClick={() => onBurn(asset.id, asset.list_accounts)}
-            disabled={Number(asset.supply) === 0}>
+            disabled={Number(asset.supply) === 0}
+          >
             Burn
           </Button>
           <Button
             view="action"
             onClick={() => onTransfer(asset.id)}
-            disabled={Number(asset.balance) === 0}>
+            disabled={Number(asset.balance) === 0}
+          >
             Transfer
           </Button>
         </Actions>
@@ -67,7 +74,7 @@ const TableAssets = ({
   ];
 
   const sortedAssets = useMemo(
-    () => assets.sort((a, b) => Number(a.id) - Number(b.id)),
+    () => assets?.sort((a, b) => Number(a.id) - Number(b.id)),
     [assets],
   );
   return (
