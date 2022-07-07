@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
     },
   ];
 
-  routes = routes.map(item => {
+  routes = routes.map((item) => {
     if (item.path === location) {
       return { ...item, active: true };
     }
@@ -48,7 +48,7 @@ const Layout = ({ children }) => {
     return item;
   });
 
-  siderRoutes = siderRoutes.map(item => {
+  siderRoutes = siderRoutes.map((item) => {
     if (item.path === location) {
       return { ...item, active: true };
     }
@@ -99,7 +99,7 @@ const Layout = ({ children }) => {
         )}
         <Content className={styles.content}>{children}</Content>
       </BaseLayout>
-      <Footer className={styles.footer}>© 2022 Evercity PTE LTD</Footer>
+      <Footer className={styles.footer}>© 2022 Evercity UG</Footer>
     </BaseLayout>
   );
 };

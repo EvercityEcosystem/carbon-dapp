@@ -16,62 +16,72 @@ const TableAssets = ({
   className,
   onTransfer,
 }) => {
-  const columns = [
-    {
-      title: "Symbol",
-      dataIndex: "symbol",
-      className: styles.cell,
-    },
-    {
-      title: "Supply",
-      dataIndex: "supply",
-      render: (supply) => parseUnits(supply),
-    },
-    {
-      title: "Balance",
-      dataIndex: "balance",
-      render: (balance) => parseUnits(balance),
-    },
-    {
-      title: "Certificates",
-      dataIndex: "certificates",
-      render: (balance) => parseUnits(balance),
-    },
-    {
-      title: "Actions",
-      dataIndex: "url",
-      width: 300,
-      render: (url, asset) => (
-        <Actions>
-          <ExternalLink view="action" href={url}>
-            View
-          </ExternalLink>
-          <Link view="action" to={`${asset.id}`}>
-            Meta
-          </Link>
-          {isCustodian && (
-            <Button view="action" onClick={() => onMint(asset.id, asset.name)}>
-              Mint
+  const columns = useMemo(() => {
+    const defaultColumns = [
+      {
+        title: "Symbol",
+        dataIndex: "symbol",
+        className: styles.cell,
+      },
+      {
+        title: "Balance",
+        dataIndex: "balance",
+        render: (balance) => parseUnits(balance),
+      },
+      {
+        title: "Retired",
+        dataIndex: "certificates",
+        render: (balance) => parseUnits(balance),
+      },
+      {
+        title: "Actions",
+        dataIndex: "url",
+        width: 300,
+        render: (url, asset) => (
+          <Actions>
+            <ExternalLink view="action" href={url}>
+              View
+            </ExternalLink>
+            <Link view="action" to={`${asset.id}`}>
+              Meta
+            </Link>
+            {isCustodian && (
+              <Button
+                view="action"
+                onClick={() => onMint(asset.id, asset.name)}
+              >
+                Mint
+              </Button>
+            )}
+            <Button
+              view="action"
+              onClick={() => onBurn(asset.id, asset.list_accounts)}
+              disabled={parseUnits(asset.supply) === 0}
+            >
+              Burn
             </Button>
-          )}
-          <Button
-            view="action"
-            onClick={() => onBurn(asset.id, asset.list_accounts)}
-            disabled={Number(asset.supply) === 0}
-          >
-            Burn
-          </Button>
-          <Button
-            view="action"
-            onClick={() => onTransfer(asset.id)}
-            disabled={Number(asset.balance) === 0}
-          >
-            Transfer
-          </Button>
-        </Actions>
-      ),
-    },
-  ];
+            <Button
+              view="action"
+              onClick={() => onTransfer(asset.id)}
+              disabled={parseUnits(asset.balance) === 0}
+            >
+              Transfer
+            </Button>
+          </Actions>
+        ),
+      },
+    ];
+
+    if (isCustodian) {
+      defaultColumns.splice(1, 0, {
+        title: "Total Supply",
+        dataIndex: "supply",
+        render: (supply) => parseUnits(supply),
+      });
+    }
+
+    return defaultColumns;
+  }, []);
 
   const sortedAssets = useMemo(
     () => assets?.sort((a, b) => Number(a.id) - Number(b.id)),
