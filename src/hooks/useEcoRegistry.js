@@ -61,7 +61,7 @@ const useEcoRegistry = () => {
     [],
   );
 
-  const pinProjectToIPFS = async ({ projectId, ...values }) => {
+  const pinProjectToIPFS = async ({ projectId, assetId, ...values }) => {
     dispatch({
       type: "setLoading",
       payload: true,
@@ -75,6 +75,7 @@ const useEcoRegistry = () => {
     }
     const project = {
       ...projectFromRegistry,
+      asset_id: assetId,
       ...values,
     };
     const url = await pinJSONToIPFS(project);
@@ -82,7 +83,7 @@ const useEcoRegistry = () => {
       type: "setUrl",
       payload: url,
     });
-    await setProjectData({ assetId: values.asset_id, url, project });
+    await setProjectData({ assetId, url, project });
     notification.success({
       message: `${values.asset_name} was pined to IPFS`,
     });

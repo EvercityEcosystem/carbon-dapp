@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import "./app.less";
 
@@ -25,9 +25,11 @@ function App() {
     <Loader spinning={!isAPIReady} tip="Connecting to blockchain node">
       <Layout>
         <Routes>
+          <Route index element={<Navigate to="/dapp/assets" replace />} />
           <Route path="login" element={<Login />} />
           <Route path="logout" element={<Logout />} />
           <Route path="dapp" element={<ProtectedRouter />}>
+            <Route index element={<Navigate to="/dapp/assets" replace />} />
             <Route path="profile" element={<Profile />} />
             <Route path="assets">
               <Route index element={<Assets />} />

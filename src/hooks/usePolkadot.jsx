@@ -249,6 +249,8 @@ const usePolkadot = () => {
     return custodian === address;
   }, [isAPIReady, custodian]);
 
+  console.log(isCustodian);
+
   const transferAsset = useCallback(
     async ({ id, account, amount }) => {
       const formattedAmount = formatUnits(amount);

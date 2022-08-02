@@ -82,7 +82,7 @@ const TableAssets = ({
     }
 
     return defaultColumns;
-  }, []);
+  }, [isCustodian]);
 
   const sortedAssets = useMemo(
     () => assets?.sort((a, b) => Number(a.id) - Number(b.id)),
