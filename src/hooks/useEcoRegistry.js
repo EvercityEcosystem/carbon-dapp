@@ -83,9 +83,11 @@ const useEcoRegistry = () => {
       type: "setUrl",
       payload: url,
     });
-    await setProjectData({ assetId, url, project });
-    notification.success({
-      message: `${values.asset_name} was pined to IPFS`,
+    await setProjectData({
+      assetId,
+      url,
+      project,
+      assetName: values.asset_name,
     });
     dispatch({
       type: "setLoading",

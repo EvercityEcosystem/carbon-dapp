@@ -16,6 +16,7 @@ import FormCreateAsset from "../../components/FormCreateAsset/FormCreateAsset";
 const Assets = () => {
   const {
     createNewAsset,
+    creatingAsset,
     loading,
     fetchAssets,
     isAPIReady,
@@ -148,11 +149,11 @@ const Assets = () => {
   return (
     <Container justify="start">
       <Typography.Title level={2}>Carbon Assets</Typography.Title>
-      {loading && (
+      {creatingAsset && (
         <Alert
           className={styles.alert}
           showIcon
-          message="Go to the external registry and buys and retires/transfers the asset"
+          message="Go to the external registry for buys and retires/transfers the asset"
           closable
           type="warning"
           action={
@@ -163,6 +164,7 @@ const Assets = () => {
         />
       )}
       <TableAssets
+        loading={loading}
         className={styles.table}
         assets={assets}
         onMint={handleMint}
