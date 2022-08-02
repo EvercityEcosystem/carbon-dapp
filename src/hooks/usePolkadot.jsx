@@ -173,9 +173,7 @@ const usePolkadot = () => {
         list_accounts: accounts,
         certificates: certificateRecord?.value || 0,
         balance: balanceRerord?.balance || 0,
-        name: metadata.name,
-        symbol: metadata.symbol,
-        url: metadata.url,
+        metadata,
         ...asset,
       };
     });

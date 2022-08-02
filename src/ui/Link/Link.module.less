@@ -1,6 +1,10 @@
 @import "../../theme";
 
 .link {
+  &--disable {
+    pointer-events: none;
+  }
+
   &-action {
     && {
       border-radius: 2px;
@@ -21,6 +25,12 @@
         color: @white;
         border-color: @primary-color-hover;
         background-color: @primary-color-hover;
+      }
+
+      &.link--disable {
+        color: rgba(0, 0, 0, 0.25);
+        background: #f5f5f5;
+        border: 1px solid #d9d9d9;
       }
     }
   }
