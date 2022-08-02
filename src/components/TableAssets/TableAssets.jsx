@@ -16,7 +16,6 @@ const TableAssets = ({
   className,
   onTransfer,
 }) => {
-  console.log(assets);
   const columns = useMemo(() => {
     const defaultColumns = [
       {
