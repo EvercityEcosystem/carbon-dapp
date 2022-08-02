@@ -20,8 +20,9 @@ const TableAssets = ({
     const defaultColumns = [
       {
         title: "Symbol",
-        dataIndex: "symbol",
+        dataIndex: "metadata",
         className: styles.cell,
+        render: (metadata) => metadata.symbol,
       },
       {
         title: "Balance",
@@ -35,14 +36,14 @@ const TableAssets = ({
       },
       {
         title: "Actions",
-        dataIndex: "url",
+        dataIndex: "metadata",
         width: 300,
-        render: (url, asset) => (
+        render: (metadata, asset) => (
           <Actions>
-            <ExternalLink view="action" href={url}>
+            <ExternalLink view="action" href={metadata.url}>
               View
             </ExternalLink>
-            <Link view="action" to={`${asset.id}`}>
+            <Link disable={asset.metadata.url} view="action" to={`${asset.id}`}>
               Meta
             </Link>
             {isCustodian && (

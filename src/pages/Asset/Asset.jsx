@@ -28,7 +28,7 @@ const Asset = () => {
       projectId,
       serial_number: serialNumber,
       amount_of_units: amountUnits,
-      asset_id: id,
+      assetId: id,
       asset_name: metaInfo.name,
     });
   };
