@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Table } from "antd";
+
 import ExternalLink from "../../ui/Link/ExternalLink";
 import Button from "../../ui/Button/Button";
 import styles from "./TableAssets.module.less";
@@ -7,6 +8,7 @@ import Actions from "../../ui/Actions/Actions";
 import classnames from "classnames";
 import Link from "../../ui/Link/Link";
 import { parseUnits } from "../../utils/converters";
+import { getCurrentUser } from "../../utils/storage";
 
 const TableAssets = ({
   assets,
@@ -39,40 +41,53 @@ const TableAssets = ({
         title: "Actions",
         dataIndex: "metadata",
         width: 300,
-        render: (metadata, asset) => (
-          <Actions>
-            <ExternalLink view="action" href={metadata.url}>
-              View
-            </ExternalLink>
-            <Link disable={asset.metadata.url} view="action" to={`${asset.id}`}>
-              Meta
-            </Link>
-            {isCustodian && (
+        render: (metadata, asset) => {
+          const { address } = getCurrentUser();
+          const hasAssetMetaPermissions =
+            asset.owner === address || isCustodian;
+          const isAssetMetaURLExists = !!metadata.url;
+          const isMetaActionEnabled =
+            isAssetMetaURLExists || hasAssetMetaPermissions;
+
+          return (
+            <Actions>
+              {isCustodian && (
+                <Button
+                  view="action"
+                  onClick={() => onMint(asset.id, asset.metadata.symbol)}
+                >
+                  Mint
+                </Button>
+              )}
               <Button
                 view="action"
-                onClick={() => onMint(asset.id, asset.metadata.symbol)}
+                onClick={() =>
+                  onBurn(asset.id, asset.list_accounts, asset.metadata.symbol)
+                }
+                disabled={parseUnits(asset.supply) === 0}
               >
-                Mint
+                Burn
               </Button>
-            )}
-            <Button
-              view="action"
-              onClick={() =>
-                onBurn(asset.id, asset.list_accounts, asset.metadata.symbol)
-              }
-              disabled={parseUnits(asset.supply) === 0}
-            >
-              Burn
-            </Button>
-            <Button
-              view="action"
-              onClick={() => onTransfer(asset.id)}
-              disabled={parseUnits(asset.balance) === 0}
-            >
-              Transfer
-            </Button>
-          </Actions>
-        ),
+              <Button
+                view="action"
+                onClick={() => onTransfer(asset.id)}
+                disabled={parseUnits(asset.balance) === 0}
+              >
+                Transfer
+              </Button>
+              {isMetaActionEnabled && (
+                <Link view="action" to={`${asset.id}`}>
+                  Meta
+                </Link>
+              )}
+              {isAssetMetaURLExists && (
+                <ExternalLink view="action" href={metadata.url}>
+                  View
+                </ExternalLink>
+              )}
+            </Actions>
+          );
+        },
       },
     ];
 
