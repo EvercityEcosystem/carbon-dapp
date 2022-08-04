@@ -14,6 +14,7 @@ const TableAssets = ({
   onBurn,
   isCustodian,
   className,
+  loading,
   onTransfer,
 }) => {
   const columns = useMemo(() => {
@@ -82,7 +83,7 @@ const TableAssets = ({
     }
 
     return defaultColumns;
-  }, []);
+  }, [isCustodian]);
 
   const sortedAssets = useMemo(
     () => assets?.sort((a, b) => Number(a.id) - Number(b.id)),
@@ -90,6 +91,7 @@ const TableAssets = ({
   );
   return (
     <Table
+      loading={loading}
       size="small"
       className={classnames(styles.table, className)}
       dataSource={sortedAssets}

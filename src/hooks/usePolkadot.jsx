@@ -30,6 +30,7 @@ const bindKeys = (keys) => (data) =>
 const usePolkadot = () => {
   const { polkadotState, dispatch } = useContext(store);
   const [loading, setLoading] = useState(false);
+  const [creatingAsset, setCreatingAsset] = useState(false);
   const navigate = useNavigate();
   const { api, injector, custodian } = polkadotState;
 
@@ -79,6 +80,7 @@ const usePolkadot = () => {
     async ({ projectId, vintageName }) => {
       const { address } = getCurrentUser();
       toggleLoading();
+      setCreatingAsset(true);
       try {
         const transformedName = `Evercity_SC_${projectId}_${vintageName}`;
         const transformedSymbol = `EVR_SC_${projectId}_${vintageName}`;
@@ -98,6 +100,7 @@ const usePolkadot = () => {
                   String(data.creator.toHuman()) === String(address)
                 ) {
                   toggleLoading();
+                  setCreatingAsset(false);
                   navigate(`${data.assetId}`);
                 }
               });
@@ -105,6 +108,7 @@ const usePolkadot = () => {
           );
       } catch (e) {
         toggleLoading();
+        setCreatingAsset(false);
         console.log(e);
       }
     },
@@ -120,16 +124,22 @@ const usePolkadot = () => {
   );
 
   const setProjectData = useCallback(
-    async ({ assetId, url, project }) => {
+    async ({ assetId, url, project, assetName }) => {
       const { address } = getCurrentUser();
       const projectHash = blake2AsHex(JSON.stringify(project));
       try {
         await api.tx.carbonAssets
           .setProjectData(assetId, url, projectHash)
-          .signAndSend(address, {
-            signer: injector.signer,
-            nonce: -1,
-          });
+          .signAndSend(
+            address,
+            {
+              signer: injector.signer,
+              nonce: -1,
+            },
+            transactionCallback(`${assetName} was pined to IPFS`, () => {
+              fetchAssets();
+            }),
+          );
       } catch (e) {
         console.log(e);
       }
@@ -139,6 +149,7 @@ const usePolkadot = () => {
 
   const fetchAssets = useCallback(async () => {
     const { address } = getCurrentUser();
+    toggleLoading();
     const assetsResponse = await api.query.carbonAssets.asset
       .entries()
       .then(bindKeys(["id"]));
@@ -181,6 +192,7 @@ const usePolkadot = () => {
       type: "setAssets",
       payload: assets,
     });
+    toggleLoading();
   }, [api]);
 
   const mintAsset = useCallback(
@@ -206,37 +218,47 @@ const usePolkadot = () => {
   );
 
   const burnAsset = useCallback(
-    ({ id, account, amount }) => {
+    async ({ id, account, amount }) => {
       const { address } = getCurrentUser();
       const formattedAmount = formatUnits(amount);
-      api.tx.carbonAssets.burn(id, account, formattedAmount).signAndSend(
-        address,
-        {
-          signer: injector.signer,
-          nonce: -1,
-        },
-        transactionCallback("Burn carbon asset", () => {
-          fetchAssets();
-        }),
-      );
+      try {
+        await api.tx.carbonAssets
+          .burn(id, account, formattedAmount)
+          .signAndSend(
+            address,
+            {
+              signer: injector.signer,
+              nonce: -1,
+            },
+            transactionCallback("Burn carbon asset", () => {
+              fetchAssets();
+            }),
+          );
+      } catch (e) {
+        console.log(e);
+      }
     },
     [api],
   );
 
   const selfBurnAsset = useCallback(
-    ({ id, amount }) => {
+    async ({ id, amount }) => {
       const { address } = getCurrentUser();
       const formattedAmount = formatUnits(amount);
-      api.tx.carbonAssets.selfBurn(id, formattedAmount).signAndSend(
-        address,
-        {
-          signer: injector.signer,
-          nonce: -1,
-        },
-        transactionCallback("Burn carbon asset", () => {
-          fetchAssets();
-        }),
-      );
+      try {
+        await api.tx.carbonAssets.selfBurn(id, formattedAmount).signAndSend(
+          address,
+          {
+            signer: injector.signer,
+            nonce: -1,
+          },
+          transactionCallback("Burn carbon asset", () => {
+            fetchAssets();
+          }),
+        );
+      } catch (e) {
+        console.log(e);
+      }
     },
     [api],
   );
@@ -286,6 +308,7 @@ const usePolkadot = () => {
     selfBurnAsset,
     isCustodian,
     transferAsset,
+    creatingAsset,
   };
 };
 
