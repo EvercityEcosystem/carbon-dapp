@@ -70,15 +70,25 @@ const useEcoRegistry = () => {
 
     if (projectFromRegistry?.codeMessages?.[0]) {
       notification.error({
-        message: projectFromRegistry.codeMessages[0].codeMessage,
+        message: "Error on ecoregistry platform",
+        description: projectFromRegistry.codeMessages[0].message,
       });
+
+      dispatch({
+        type: "setLoading",
+        payload: false,
+      });
+
+      return;
     }
+
     const project = {
       ...projectFromRegistry,
       asset_id: assetId,
       ...values,
     };
     const url = await pinJSONToIPFS(project);
+
     dispatch({
       type: "setUrl",
       payload: url,

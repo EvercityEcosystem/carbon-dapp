@@ -50,14 +50,16 @@ const TableAssets = ({
             {isCustodian && (
               <Button
                 view="action"
-                onClick={() => onMint(asset.id, asset.name)}
+                onClick={() => onMint(asset.id, asset.metadata.symbol)}
               >
                 Mint
               </Button>
             )}
             <Button
               view="action"
-              onClick={() => onBurn(asset.id, asset.list_accounts)}
+              onClick={() =>
+                onBurn(asset.id, asset.list_accounts, asset.metadata.symbol)
+              }
               disabled={parseUnits(asset.supply) === 0}
             >
               Burn

@@ -82,7 +82,7 @@ const Assets = () => {
           formMint.submit();
         });
       },
-      title: `Mint ${assetName} asset`,
+      title: `Mint asset: ${assetName}`,
       onCancel: () => formMint.resetFields(),
       content: (
         <FormMintAsset
@@ -95,9 +95,9 @@ const Assets = () => {
       ),
     });
   };
-  const handleBurn = (assetId, accounts) => {
+  const handleBurn = (assetId, accounts, assetName) => {
     modal.confirm({
-      title: `Burn asset`,
+      title: `Burn asset: ${assetName}`,
       icon: <FireOutlined />,
       onOk: (close) => {
         formBurn.validateFields().then(() => {
