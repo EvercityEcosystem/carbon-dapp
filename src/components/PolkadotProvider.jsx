@@ -26,6 +26,12 @@ const reducer = (state, action) => {
         ...state,
         assets: action?.payload,
       };
+    case "setCertificates":
+      return {
+        ...state,
+        certificates: action?.payload,
+      };
+
     default:
       throw new Error("Action not found");
   }

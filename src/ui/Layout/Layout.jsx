@@ -38,6 +38,10 @@ const Layout = ({ children }) => {
       path: "/dapp/assets",
       title: "Assets",
     },
+    {
+      path: "/dapp/certificates",
+      title: "Certificates",
+    },
   ];
 
   routes = routes.map((item) => {

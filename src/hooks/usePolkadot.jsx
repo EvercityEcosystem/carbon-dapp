@@ -161,6 +161,7 @@ const usePolkadot = () => {
     const balanceAssets = await api.query.carbonAssets.account
       .entries()
       .then(bindKeys(["id", "account"]));
+
     const burnCertificates = await api.query.carbonAssets.burnCertificate
       .entries()
       .then(bindKeys(["account", "id"]));
@@ -175,14 +176,15 @@ const usePolkadot = () => {
       const accounts = balanceAssets
         .filter((balance) => balance.id === asset.id)
         .map((balance) => balance.account);
+
       const certificateRecord = burnCertificates.find(
         (certificate) =>
           certificate.id === asset.id && certificate.account === address,
       );
 
       return {
-        list_accounts: accounts,
         certificates: certificateRecord?.value || 0,
+        list_accounts: accounts,
         balance: balanceRerord?.balance || 0,
         metadata,
         ...asset,
@@ -294,6 +296,20 @@ const usePolkadot = () => {
     },
     [api],
   );
+
+  const fetchCertificates = useCallback(async () => {
+    toggleLoading();
+    const burnCertificates = await api.query.carbonAssets.burnCertificate
+      .entries()
+      .then(bindKeys(["account", "id"]));
+
+    dispatch({
+      type: "setCertificates",
+      payload: burnCertificates,
+    });
+    toggleLoading();
+  }, [api, isCustodian]);
+
   return {
     initAPI,
     isAPIReady,
@@ -309,6 +325,7 @@ const usePolkadot = () => {
     isCustodian,
     transferAsset,
     creatingAsset,
+    fetchCertificates,
   };
 };
 
