@@ -47,7 +47,7 @@ const TableAssets = ({
             asset.owner === address || isCustodian;
           const isAssetMetaURLExists = !!metadata.url;
           const isMetaActionEnabled =
-            isAssetMetaURLExists || hasAssetMetaPermissions;
+            !isAssetMetaURLExists && hasAssetMetaPermissions;
 
           return (
             <Actions>
