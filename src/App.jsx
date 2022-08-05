@@ -13,6 +13,7 @@ import ProtectedRouter from "./components/ProtectedRouter/ProtectedRouter";
 import Assets from "./pages/Assets/Assets";
 import Profile from "./pages/Profile/Profile";
 import Asset from "./pages/Asset/Asset";
+import Certificates from "./pages/Certificates/Certificates";
 
 function App() {
   const { initAPI, isAPIReady } = usePolkadot();
@@ -31,6 +32,7 @@ function App() {
           <Route path="dapp" element={<ProtectedRouter />}>
             <Route index element={<Navigate to="/dapp/assets" replace />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="certificates" element={<Certificates />} />
             <Route path="assets">
               <Route index element={<Assets />} />
               <Route path=":id" element={<Asset />} />
