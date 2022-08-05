@@ -6,6 +6,23 @@ import { getCurrentUser } from "../utils/storage";
 import { useNavigate } from "react-router-dom";
 import { blake2AsHex } from "@polkadot/util-crypto";
 import { formatUnits } from "../utils/converters";
+import { hexToString, isHex } from "@polkadot/util";
+
+const normalizeMeta = (metadata = {}) => {
+  const normalizedMeta = metadata.toHuman
+    ? { ...metadata.toHuman() }
+    : { ...metadata };
+
+  if (isHex(normalizedMeta?.name)) {
+    normalizedMeta.name = hexToString(normalizedMeta.name);
+  }
+
+  if (isHex(normalizedMeta?.symbol)) {
+    normalizedMeta.symbol = hexToString(normalizedMeta.symbol);
+  }
+
+  return normalizedMeta;
+};
 
 const bindKeys = (keys) => (data) =>
   data.map(([option, value]) => {
@@ -116,10 +133,7 @@ const usePolkadot = () => {
   );
 
   const fetchMetadataAsset = useCallback(
-    (id) =>
-      api.query.carbonAssets
-        .metadata(id)
-        .then((metadata) => metadata.toHuman()),
+    (id) => api.query.carbonAssets.metadata(id).then(normalizeMeta),
     [api],
   );
 
@@ -167,9 +181,9 @@ const usePolkadot = () => {
       .then(bindKeys(["account", "id"]));
 
     const assets = assetsResponse.map((asset) => {
-      const metadata = metaDataResponse.find(
-        (metadata) => metadata.id === asset.id,
-      );
+      const metadata = metaDataResponse
+        .map(normalizeMeta)
+        .find((metadata) => metadata.id === asset.id);
       const balanceRerord = balanceAssets.find(
         (balance) => balance.account === address && balance.id === asset.id,
       );
