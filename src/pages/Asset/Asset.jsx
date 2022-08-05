@@ -26,9 +26,9 @@ const Asset = () => {
     const projectId = metaInfo.name.replace(/Evercity_SC_(\d+)_\w+/i, "$1");
     await pinProjectToIPFS({
       projectId,
+      assetId: id,
       serial_number: serialNumber,
       amount_of_units: amountUnits,
-      asset_id: id,
       asset_name: metaInfo.name,
     });
   };
