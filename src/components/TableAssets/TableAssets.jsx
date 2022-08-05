@@ -35,7 +35,7 @@ const TableAssets = ({
       {
         title: "Retired",
         dataIndex: "certificates",
-        render: (balance) => parseUnits(balance),
+        render: (certificates) => parseUnits(certificates),
       },
       {
         title: "Actions",

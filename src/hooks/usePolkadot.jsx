@@ -162,6 +162,10 @@ const usePolkadot = () => {
       .entries()
       .then(bindKeys(["id", "account"]));
 
+    const burnCertificates = await api.query.carbonAssets.burnCertificate
+      .entries()
+      .then(bindKeys(["account", "id"]));
+
     const assets = assetsResponse.map((asset) => {
       const metadata = metaDataResponse.find(
         (metadata) => metadata.id === asset.id,
@@ -173,7 +177,13 @@ const usePolkadot = () => {
         .filter((balance) => balance.id === asset.id)
         .map((balance) => balance.account);
 
+      const certificateRecord = burnCertificates.find(
+        (certificate) =>
+          certificate.id === asset.id && certificate.account === address,
+      );
+
       return {
+        certificates: certificateRecord?.value || 0,
         list_accounts: accounts,
         balance: balanceRerord?.balance || 0,
         metadata,

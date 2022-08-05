@@ -5,6 +5,7 @@ import usePolkadot from "../../hooks/usePolkadot";
 import { store } from "../../components/PolkadotProvider";
 import { getCurrentUser } from "../../utils/storage";
 import styles from "./Certificates.module.less";
+import { parseUnits } from "../../utils/converters";
 
 const columns = [
   {
@@ -14,6 +15,7 @@ const columns = [
   {
     title: "Burned amount",
     dataIndex: "value",
+    render: (value) => parseUnits(value),
   },
 ];
 
