@@ -66,8 +66,8 @@ const Assets = () => {
       content: (
         <FormCreateAsset
           form={formCreate}
-          onSubmit={({ projectId, vintageName }) => {
-            createNewAsset({ projectId, vintageName });
+          onSubmit={({ projectId, assetName }) => {
+            createNewAsset({ projectId, assetName });
           }}
         />
       ),

@@ -7,7 +7,7 @@ const FormCreateAsset = ({ form, onSubmit }) => {
       <Form.Item
         required
         label="Asset name"
-        name="vintageName"
+        name="assetName"
         rules={[{ required: true }]}
       >
         <Input />

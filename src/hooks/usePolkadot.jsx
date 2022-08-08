@@ -94,15 +94,14 @@ const usePolkadot = () => {
   }, [api]);
 
   const createNewAsset = useCallback(
-    async ({ projectId, vintageName }) => {
+    async ({ projectId, assetName }) => {
       const { address } = getCurrentUser();
       toggleLoading();
       setCreatingAsset(true);
       try {
-        const transformedName = `Evercity_SC_${projectId}_${vintageName}`;
-        const transformedSymbol = `EVR_SC_${projectId}_${vintageName}`;
+        const transformedSymbol = `EVR_CARBONCER_${projectId}_${assetName}`;
         await api.tx.carbonAssets
-          .create(transformedName, transformedSymbol)
+          .create(assetName, transformedSymbol)
           .signAndSend(
             address,
             {
@@ -150,7 +149,7 @@ const usePolkadot = () => {
               signer: injector.signer,
               nonce: -1,
             },
-            transactionCallback(`${assetName} was pined to IPFS`, () => {
+            transactionCallback(`${assetName} pin to IPFS`, () => {
               fetchAssets();
             }),
           );

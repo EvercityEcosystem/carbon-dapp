@@ -22,29 +22,31 @@ const Asset = () => {
     }
   }, [id, isAPIReady]);
 
-  const handleSave = async ({ serialNumber, amountUnits }) => {
-    const projectId = metaInfo.name.replace(/Evercity_SC_(\d+)_\w+/i, "$1");
+  const handleSave = async ({ serialNumber, amountOfUnits }) => {
+    const projectId = metaInfo.symbol.replace(/EVR_CARBONCER_(\d+)_\w+/i, "$1");
     await pinProjectToIPFS({
       projectId,
       assetId: id,
-      serial_number: serialNumber,
-      amount_of_units: amountUnits,
-      asset_name: metaInfo.name,
+      serialNumber,
+      amountOfUnits,
+      assetName: metaInfo.name,
+      assetSymbol: metaInfo?.symbol,
     });
   };
+
   return (
     <Container>
       <div className={styles.info}>
         <Statistic
           className={styles.name}
-          title="Asset name"
-          value={metaInfo?.name}
+          title="Asset symbol"
+          value={metaInfo?.symbol}
         />
         <CopyOutlined
           className={styles.copyIcon}
           onClick={() => {
-            navigator.clipboard.writeText(metaInfo?.name);
-            message.success("Asset name copied!");
+            navigator.clipboard.writeText(metaInfo?.symbol);
+            message.success("Asset symbol copied!");
           }}
         />
       </div>
@@ -69,7 +71,7 @@ const Asset = () => {
         </Form.Item>
         <Form.Item
           label="Amount of carbon units"
-          name="amountUnits"
+          name="amountOfUnits"
           required
           rules={[
             {
