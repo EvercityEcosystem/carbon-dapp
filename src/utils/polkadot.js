@@ -17,7 +17,7 @@ const connect = async () =>
   });
 
 const getInjector = async () => {
-  await web3Enable("Evercity dApp");
+  await web3Enable("Carbon dApp");
   const injector =
     (await web3FromSource(import.meta.env.VITE_EXTENSION_NAME)) || null;
 

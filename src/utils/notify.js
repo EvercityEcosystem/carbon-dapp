@@ -1,7 +1,15 @@
 import { notification } from "antd";
 
-const transactionCallback = (message, cb) => info => {
-  const { status } = info;
+const transactionCallback = (message, cb) => (info) => {
+  const { status, internalError } = info;
+
+  if (internalError || status.isInvalid) {
+    notification.error({
+      message,
+      description: `Extrinsic error: ${internalError}`,
+    });
+  }
+
   if (status.isInBlock) {
     notification.success({
       message,
@@ -10,9 +18,6 @@ const transactionCallback = (message, cb) => info => {
   }
 
   if (status.isFinalized) {
-    const { Finalized } = status.toJSON();
-    console.info(message, Finalized);
-
     notification.success({
       message,
       description: "Block finalized",

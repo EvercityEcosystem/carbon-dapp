@@ -1,12 +1,14 @@
 import { useCallback, useContext, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { blake2AsHex } from "@polkadot/util-crypto";
+import { hexToString, isHex } from "@polkadot/util";
+import { notification } from "antd";
+
 import { store } from "../components/PolkadotProvider";
 import { connect, getInjector } from "../utils/polkadot";
 import { transactionCallback } from "../utils/notify";
 import { getCurrentUser } from "../utils/storage";
-import { useNavigate } from "react-router-dom";
-import { blake2AsHex } from "@polkadot/util-crypto";
 import { formatUnits } from "../utils/converters";
-import { hexToString, isHex } from "@polkadot/util";
 
 const normalizeMeta = (metadata = {}) => {
   const normalizedMeta = metadata.toHuman
@@ -125,7 +127,13 @@ const usePolkadot = () => {
       } catch (e) {
         toggleLoading();
         setCreatingAsset(false);
-        console.log(e);
+
+        notification.error({
+          message: "Extrinsic error",
+          description: e.message,
+        });
+
+        console.error(e);
       }
     },
     [api, navigate, toggleLoading],
@@ -154,6 +162,11 @@ const usePolkadot = () => {
             }),
           );
       } catch (e) {
+        notification.error({
+          message: "Extrinsic error",
+          description: e.message,
+        });
+
         console.log(e);
       }
     },
@@ -226,6 +239,11 @@ const usePolkadot = () => {
           }),
         );
       } catch (e) {
+        notification.error({
+          message: "Extrinsic error",
+          description: e.message,
+        });
+
         console.log(e);
       }
     },
@@ -250,6 +268,11 @@ const usePolkadot = () => {
             }),
           );
       } catch (e) {
+        notification.error({
+          message: "Extrinsic error",
+          description: e.message,
+        });
+
         console.log(e);
       }
     },
@@ -272,6 +295,11 @@ const usePolkadot = () => {
           }),
         );
       } catch (e) {
+        notification.error({
+          message: "Extrinsic error",
+          description: e.message,
+        });
+
         console.log(e);
       }
     },
@@ -304,6 +332,11 @@ const usePolkadot = () => {
             }),
           );
       } catch (e) {
+        notification.error({
+          message: "Extrinsic error",
+          description: e.message,
+        });
+
         console.log(e);
       }
     },

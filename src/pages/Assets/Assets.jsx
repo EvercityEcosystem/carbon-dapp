@@ -8,7 +8,7 @@ import TableAssets from "../../components/TableAssets/TableAssets";
 import { getCurrentUser } from "../../utils/storage";
 import ExternalLink from "../../ui/Link/ExternalLink";
 import FormMintAsset from "../../components/FormMintAsset/FormMintAsset";
-import FormBurnAsset from "../../components/FormBurnAsset/FormBurmAsset";
+import FormBurnAsset from "../../components/FormBurnAsset/FormBurnAsset";
 import { FireOutlined, SendOutlined } from "@ant-design/icons";
 import FormTransferAsset from "../../components/FormTransferAsset/FormTransferAsset";
 import FormCreateAsset from "../../components/FormCreateAsset/FormCreateAsset";

@@ -13,7 +13,8 @@ const FormTransferAsset = ({ form, onFinish }) => {
           {
             required: true,
           },
-        ]}>
+        ]}
+      >
         <Input />
       </Form.Item>
       <Form.Item
@@ -24,8 +25,9 @@ const FormTransferAsset = ({ form, onFinish }) => {
           {
             required: true,
           },
-        ]}>
-        <InputNumber min={0} />
+        ]}
+      >
+        <InputNumber min={1} />
       </Form.Item>
     </Form>
   );

@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { Table } from "antd";
+import { Table, message } from "antd";
+import { CopyOutlined } from "@ant-design/icons";
 
 import ExternalLink from "../../ui/Link/ExternalLink";
 import Button from "../../ui/Button/Button";
@@ -22,22 +23,26 @@ const TableAssets = ({
   const columns = useMemo(() => {
     const defaultColumns = [
       {
-        title: "Symbol",
+        key: "symbol",
+        title: "Name",
         dataIndex: "metadata",
         className: styles.cell,
-        render: (metadata) => metadata.symbol,
+        render: (metadata) => metadata.name,
       },
       {
+        key: "balance",
         title: "Balance",
         dataIndex: "balance",
         render: (balance) => parseUnits(balance),
       },
       {
+        key: "retired",
         title: "Retired",
         dataIndex: "certificates",
         render: (certificates) => parseUnits(certificates),
       },
       {
+        key: "actions",
         title: "Actions",
         dataIndex: "metadata",
         width: 300,
@@ -113,6 +118,35 @@ const TableAssets = ({
       className={classnames(styles.table, className)}
       dataSource={sortedAssets}
       columns={columns}
+      rowKey="id"
+      expandable={{
+        expandedRowRender: (record) => (
+          <>
+            <div style={{ margin: 10 }}>
+              <span style={{ margin: 6 }}>Asset ID: {record.id}</span>
+              <CopyOutlined
+                className={styles.copyIcon}
+                onClick={() => {
+                  navigator.clipboard.writeText(record.id);
+                  message.success("ID copied!");
+                }}
+              />
+            </div>
+            <div style={{ margin: 10 }}>
+              <span style={{ margin: 6 }}>
+                Symbol: {record.metadata.symbol}
+              </span>
+              <CopyOutlined
+                className={styles.copyIcon}
+                onClick={() => {
+                  navigator.clipboard.writeText(record.metadata.symbol);
+                  message.success("Symbol copied!");
+                }}
+              />
+            </div>
+          </>
+        ),
+      }}
     />
   );
 };

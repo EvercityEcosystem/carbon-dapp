@@ -14,9 +14,10 @@ const FormBurnAsset = ({ form, isCustodian, accounts, onFinish }) => {
             {
               required: true,
             },
-          ]}>
+          ]}
+        >
           <Select
-            options={accounts.map(account => ({
+            options={accounts.map((account) => ({
               label: account,
               value: account,
             }))}
@@ -31,8 +32,9 @@ const FormBurnAsset = ({ form, isCustodian, accounts, onFinish }) => {
           {
             required: true,
           },
-        ]}>
-        <InputNumber min={0} />
+        ]}
+      >
+        <InputNumber min={1} />
       </Form.Item>
     </Form>
   );

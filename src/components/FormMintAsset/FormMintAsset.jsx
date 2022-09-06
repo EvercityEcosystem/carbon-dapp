@@ -13,8 +13,9 @@ const FormMintAsset = ({ form, onFinish }) => {
           {
             required: true,
           },
-        ]}>
-        <InputNumber min={0} />
+        ]}
+      >
+        <InputNumber min={1} />
       </Form.Item>
     </Form>
   );
