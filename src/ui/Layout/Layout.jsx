@@ -42,6 +42,10 @@ const Layout = ({ children }) => {
       path: "/dapp/certificates",
       title: "Certificates",
     },
+    {
+      path: "/dapp/transactions",
+      title: "Transactions",
+    },
   ];
 
   routes = routes.map((item) => {

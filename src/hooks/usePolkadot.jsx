@@ -10,7 +10,7 @@ import { transactionCallback } from "../utils/notify";
 import { getCurrentUser } from "../utils/storage";
 import { formatUnits } from "../utils/converters";
 
-const PINATA_URI = "https://api.pinata.cloud";
+// const PINATA_URI = "https://api.pinata.cloud";
 
 const normalizeMeta = (metadata = {}) => {
   const normalizedMeta = metadata.toHuman
@@ -279,33 +279,34 @@ const usePolkadot = () => {
     [api],
   );
 
-  const saveCerificateToIPFS = useCallback(
-    (body) =>
-      fetch(`${PINATA_URI}/pinning/pinJSONToIPFS`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-        },
-        body: JSON.stringify(body),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.error) {
-            notification.error({
-              message: data.error.reason,
-              description: data.error.details,
-            });
-          }
-          if (data.IpfsHash) {
-            return `https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`;
-          }
-        }),
-    [],
-  );
+  // const saveCerificateToIPFS = useCallback(
+  //   (body) =>
+  //     fetch(`${PINATA_URI}/pinning/pinJSONToIPFS`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+  //       },
+  //       body: JSON.stringify(body),
+  //     })
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         if (data.error) {
+  //           notification.error({
+  //             message: data.error.reason,
+  //             description: data.error.details,
+  //           });
+  //         }
+  //         if (data.IpfsHash) {
+  //           return `https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`;
+  //         }
+  //       }),
+  //   [],
+  // );
 
   const burnAsset = useCallback(
-    async ({ id, account, amount, beneficiary }) => {
+    async ({ id, account, amount }) => {
+      // beneficiary
       const { address } = getCurrentUser();
       const formattedAmount = formatUnits(amount);
       try {
@@ -319,12 +320,12 @@ const usePolkadot = () => {
             },
             transactionCallback("Burn carbon asset", () => {
               fetchAssets();
-              saveCerificateToIPFS({
-                beneficiary,
-                amount,
-                assetId: id,
-                retirementInitiator: account,
-              });
+              // saveCerificateToIPFS({
+              //   beneficiary,
+              //   amount,
+              //   assetId: id,
+              //   retirementInitiator: account,
+              // });
             }),
           );
       } catch (e) {

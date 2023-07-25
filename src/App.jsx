@@ -14,6 +14,7 @@ import Assets from "./pages/Assets/Assets";
 import Profile from "./pages/Profile/Profile";
 import Asset from "./pages/Asset/Asset";
 import Certificates from "./pages/Certificates/Certificates";
+import Transactions from "./pages/Transactions/Transactions";
 
 function App() {
   const { initAPI, isAPIReady } = usePolkadot();
@@ -33,6 +34,7 @@ function App() {
             <Route index element={<Navigate to="/dapp/assets" replace />} />
             <Route path="profile" element={<Profile />} />
             <Route path="certificates" element={<Certificates />} />
+            <Route path="transactions" element={<Transactions />} />
             <Route path="assets">
               <Route index element={<Assets />} />
               <Route path=":id" element={<Asset />} />
