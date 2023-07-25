@@ -60,6 +60,8 @@ const Layout = ({ children }) => {
     return item;
   });
 
+  const date = new Date();
+
   return (
     <BaseLayout>
       <Header className={styles.header}>
@@ -103,7 +105,9 @@ const Layout = ({ children }) => {
         )}
         <Content className={styles.content}>{children}</Content>
       </BaseLayout>
-      <Footer className={styles.footer}>© 2022 Evercity UG</Footer>
+      <Footer className={styles.footer}>
+        © {date.getFullYear()} Evercity UG
+      </Footer>
     </BaseLayout>
   );
 };

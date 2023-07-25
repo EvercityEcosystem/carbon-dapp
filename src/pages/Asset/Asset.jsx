@@ -8,6 +8,8 @@ import usePolkadot from "../../hooks/usePolkadot";
 import styles from "./Aseet.module.less";
 import { CopyOutlined } from "@ant-design/icons";
 
+import useAssetStore from "../../hooks/useAssetStore";
+
 const Asset = () => {
   const { id } = useParams();
   const [metaInfo, setMetaInfo] = useState();
@@ -22,10 +24,22 @@ const Asset = () => {
     }
   }, [id, isAPIReady]);
 
+  const { mode, data: assetData } = useAssetStore((state) => ({
+    mode: state.mode,
+    data: state.data,
+  }));
+
   const handleSave = async ({ serialNumber, amountOfUnits }) => {
-    const projectId = metaInfo.symbol.replace(/EVR_CARBONCER_(\d+)_\w+/i, "$1");
+    let projectId = null;
+
+    if (mode === "assetByProject") {
+      projectId = metaInfo.symbol.replace(/EVR_CARBONCER_(\d+)_\w+/i, "$1");
+    }
+
     await pinProjectToIPFS({
       projectId,
+      mode,
+      assetData,
       assetId: id,
       serialNumber,
       amountOfUnits,
@@ -57,27 +71,19 @@ const Asset = () => {
         labelCol={{ span: 14 }}
         wrapperCol={{ span: 10 }}
       >
-        <Form.Item
-          label="Serial number"
-          name="serialNumber"
-          required
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
+        {mode === "assetByProject" && (
+          <Form.Item
+            label="Serial number"
+            name="serialNumber"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+        )}
         <Form.Item
           label="Amount of carbon units"
           name="amountOfUnits"
-          required
-          rules={[
-            {
-              required: true,
-            },
-          ]}
+          rules={[{ required: true }]}
         >
           <InputNumber />
         </Form.Item>

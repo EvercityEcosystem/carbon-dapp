@@ -71,7 +71,7 @@ const TableAssets = ({
                 }
                 disabled={parseUnits(asset.supply) === 0}
               >
-                Burn
+                Retire
               </Button>
               <Button
                 view="action"

@@ -65,26 +65,32 @@ const useEcoRegistry = () => {
     projectId,
     assetId,
     assetName,
+    mode,
     ...values
   }) => {
-    dispatch({
-      type: "setLoading",
-      payload: true,
-    });
-    const projectFromRegistry = await fetchProject(projectId);
+    let projectFromRegistry = {};
 
-    if (projectFromRegistry?.codeMessages?.[0]) {
-      notification.error({
-        message: "Error on ecoregistry platform",
-        description: projectFromRegistry.codeMessages[0].message,
-      });
-
+    if (mode === "assetByProject") {
       dispatch({
         type: "setLoading",
-        payload: false,
+        payload: true,
       });
 
-      return;
+      const projectFromRegistry = await fetchProject(projectId);
+
+      if (projectFromRegistry?.codeMessages?.[0]) {
+        notification.error({
+          message: "Error on ecoregistry platform",
+          description: projectFromRegistry.codeMessages[0].message,
+        });
+
+        dispatch({
+          type: "setLoading",
+          payload: false,
+        });
+
+        return;
+      }
     }
 
     const project = {

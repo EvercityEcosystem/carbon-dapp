@@ -56,6 +56,8 @@ const Assets = () => {
   const handleRequest = async () => {
     modal.confirm({
       title: "Create a new asset",
+      centered: true,
+      width: 656,
       onOk: (close) => {
         formCreate.validateFields().then(() => {
           close();
@@ -66,8 +68,8 @@ const Assets = () => {
       content: (
         <FormCreateAsset
           form={formCreate}
-          onSubmit={({ projectId, assetName }) => {
-            createNewAsset({ projectId, assetName });
+          onSubmit={(params) => {
+            createNewAsset(params);
           }}
         />
       ),
@@ -97,7 +99,7 @@ const Assets = () => {
   };
   const handleBurn = (assetId, accounts, assetName) => {
     modal.confirm({
-      title: `Burn asset: ${assetName}`,
+      title: `Retire asset: ${assetName}`,
       icon: <FireOutlined />,
       onOk: (close) => {
         formBurn.validateFields().then(() => {
@@ -111,12 +113,12 @@ const Assets = () => {
           form={formBurn}
           accounts={accounts}
           isCustodian={isCustodian}
-          onFinish={({ amount, account }) => {
+          onFinish={({ amount, account, beneficiary }) => {
             if (isCustodian) {
-              burnAsset({ id: assetId, account, amount });
+              burnAsset({ id: assetId, account, amount, beneficiary });
             }
             if (!isCustodian) {
-              selfBurnAsset({ id: assetId, amount });
+              selfBurnAsset({ id: assetId, amount, beneficiary });
             }
           }}
         />

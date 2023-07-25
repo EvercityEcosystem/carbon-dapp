@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Select } from "antd";
+import { Form, Select, Input } from "antd";
 import InputNumber from "../../ui/InputNumber/InputNumber";
 
 const FormBurnAsset = ({ form, isCustodian, accounts, onFinish }) => {
@@ -35,6 +35,9 @@ const FormBurnAsset = ({ form, isCustodian, accounts, onFinish }) => {
         ]}
       >
         <InputNumber min={1} />
+      </Form.Item>
+      <Form.Item name="beneficiary" label="Beneficiary (optional)">
+        <Input />
       </Form.Item>
     </Form>
   );

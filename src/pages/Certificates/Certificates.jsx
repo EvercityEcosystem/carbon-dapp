@@ -13,7 +13,7 @@ const columns = [
     dataIndex: "id",
   },
   {
-    title: "Burned amount",
+    title: "Retired amount",
     dataIndex: "value",
     render: (value) => parseUnits(value),
   },
@@ -28,6 +28,7 @@ const Certificates = () => {
     if (isCustodian) {
       return polkadotState.certificates;
     }
+
     return polkadotState.certificates?.filter((cer) => cer.account === address);
   }, [polkadotState, isCustodian]);
 

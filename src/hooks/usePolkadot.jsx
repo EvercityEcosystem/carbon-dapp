@@ -10,6 +10,8 @@ import { transactionCallback } from "../utils/notify";
 import { getCurrentUser } from "../utils/storage";
 import { formatUnits } from "../utils/converters";
 
+const PINATA_URI = "https://api.pinata.cloud";
+
 const normalizeMeta = (metadata = {}) => {
   const normalizedMeta = metadata.toHuman
     ? { ...metadata.toHuman() }
@@ -96,12 +98,39 @@ const usePolkadot = () => {
   }, [api]);
 
   const createNewAsset = useCallback(
-    async ({ projectId, assetName }) => {
+    async (params) => {
       const { address } = getCurrentUser();
       toggleLoading();
-      setCreatingAsset(true);
+
+      let transformedSymbol = "";
+      let assetName = "";
+
+      const { projectId } = params;
+
+      if (projectId) {
+        setCreatingAsset(true);
+
+        assetName = params.assetName;
+        transformedSymbol = `EVR_CARBONCER_${projectId}_${assetName}`;
+      } else {
+        assetName = params["Asset name"];
+
+        const {
+          "Project owner company name": ownerCompanyName,
+          "Validation report number": validationReportNumber,
+          "Verification report number": verificationReportNumber,
+          Vintage: vintage,
+          "Starting serial number": startingSerialNumber,
+          "Ending serial number": endingSerialNumber,
+        } = params;
+
+        transformedSymbol = `EVR_REGISTRY_${ownerCompanyName.replace(
+          " ",
+          "_",
+        )}_${validationReportNumber}_${verificationReportNumber}_${vintage}_${startingSerialNumber}_${endingSerialNumber}`;
+      }
+
       try {
-        const transformedSymbol = `EVR_CARBONCER_${projectId}_${assetName}`;
         await api.tx.carbonAssets
           .create(assetName, transformedSymbol)
           .signAndSend(
@@ -250,8 +279,33 @@ const usePolkadot = () => {
     [api],
   );
 
+  const saveCerificateToIPFS = useCallback(
+    (body) =>
+      fetch(`${PINATA_URI}/pinning/pinJSONToIPFS`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+        },
+        body: JSON.stringify(body),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.error) {
+            notification.error({
+              message: data.error.reason,
+              description: data.error.details,
+            });
+          }
+          if (data.IpfsHash) {
+            return `https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`;
+          }
+        }),
+    [],
+  );
+
   const burnAsset = useCallback(
-    async ({ id, account, amount }) => {
+    async ({ id, account, amount, beneficiary }) => {
       const { address } = getCurrentUser();
       const formattedAmount = formatUnits(amount);
       try {
@@ -265,6 +319,12 @@ const usePolkadot = () => {
             },
             transactionCallback("Burn carbon asset", () => {
               fetchAssets();
+              saveCerificateToIPFS({
+                beneficiary,
+                amount,
+                assetId: id,
+                retirementInitiator: account,
+              });
             }),
           );
       } catch (e) {
