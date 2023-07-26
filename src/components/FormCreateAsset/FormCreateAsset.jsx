@@ -36,17 +36,17 @@ const formItems = [
     key="startingDate"
     label="Project starting date (year)"
     name="Project starting date"
-    rules={[{ type: "number", required: true, min: 2020, max: 2100 }]}
+    rules={[{ type: "number", required: true, min: 2000, max: 2100 }]}
   >
-    <InputNumber min={2020} max={2100} style={{ width: "100%" }} />
+    <InputNumber min={2000} max={2100} style={{ width: "100%" }} />
   </Form.Item>,
   <Form.Item
     key="endingDate"
     label="Project ending date (year)"
     name="Project ending date"
-    rules={[{ type: "number", required: true, min: 2020, max: 2100 }]}
+    rules={[{ type: "number", required: true, min: 2000, max: 2100 }]}
   >
-    <InputNumber min={2020} max={2100} style={{ width: "100%" }} />
+    <InputNumber min={2000} max={2100} style={{ width: "100%" }} />
   </Form.Item>,
   <Form.Item
     key="anticipatedEmissionReductions"
