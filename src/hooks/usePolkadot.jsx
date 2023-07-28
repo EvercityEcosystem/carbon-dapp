@@ -111,23 +111,18 @@ const usePolkadot = () => {
         setCreatingAsset(true);
 
         assetName = params.assetName;
-        transformedSymbol = `EVR_CARBONCER_${projectId}_${assetName}`;
+        transformedSymbol = `EVR_${projectId}_${assetName}`;
       } else {
-        assetName = params["Asset name"];
-
         const {
-          "Project owner company name": ownerCompanyName,
-          "Validation report number": validationReportNumber,
-          "Verification report number": verificationReportNumber,
           Vintage: vintage,
-          "Starting serial number": startingSerialNumber,
-          "Ending serial number": endingSerialNumber,
+          "Project ticker": projectTicker,
+          "Project name": projectName,
+          "Total amount of issuance": amountOfIssuance,
         } = params;
 
-        transformedSymbol = `EVR_REGISTRY_${ownerCompanyName.replace(
-          " ",
-          "_",
-        )}_${validationReportNumber}_${verificationReportNumber}_${vintage}_${startingSerialNumber}_${endingSerialNumber}`;
+        assetName = `${projectName}_${vintage}_${amountOfIssuance}`;
+
+        transformedSymbol = `GDP_${projectTicker}_${vintage}`;
       }
 
       try {
@@ -170,35 +165,6 @@ const usePolkadot = () => {
 
   const fetchMetadataAsset = useCallback(
     (id) => api.query.carbonAssets.metadata(id).then(normalizeMeta),
-    [api],
-  );
-
-  const setProjectData = useCallback(
-    async ({ assetId, url, project, assetName }) => {
-      const { address } = getCurrentUser();
-      const projectHash = blake2AsHex(JSON.stringify(project));
-      try {
-        await api.tx.carbonAssets
-          .setProjectData(assetId, url, projectHash)
-          .signAndSend(
-            address,
-            {
-              signer: injector.signer,
-              nonce: -1,
-            },
-            transactionCallback(`${assetName} pin to IPFS`, () => {
-              fetchAssets();
-            }),
-          );
-      } catch (e) {
-        notification.error({
-          message: "Extrinsic error",
-          description: e.message,
-        });
-
-        console.log(e);
-      }
-    },
     [api],
   );
 
@@ -251,6 +217,36 @@ const usePolkadot = () => {
     });
     toggleLoading();
   }, [api]);
+
+  const setProjectData = useCallback(
+    async ({ assetId, url, project, assetName }) => {
+      const { address } = getCurrentUser();
+      const projectHash = blake2AsHex(JSON.stringify(project));
+      try {
+        await api.tx.carbonAssets
+          .setProjectData(assetId, url, projectHash)
+          .signAndSend(
+            address,
+            {
+              signer: injector.signer,
+              nonce: -1,
+            },
+            transactionCallback(`${assetName} pin to IPFS`, () => {
+              fetchAssets();
+              navigate("/");
+            }),
+          );
+      } catch (e) {
+        notification.error({
+          message: "Extrinsic error",
+          description: e.message,
+        });
+
+        console.log(e);
+      }
+    },
+    [api, navigate, fetchAssets],
+  );
 
   const mintAsset = useCallback(
     async ({ id, amount }) => {
@@ -406,13 +402,26 @@ const usePolkadot = () => {
 
   const fetchCertificates = useCallback(async () => {
     toggleLoading();
+
     const burnCertificates = await api.query.carbonAssets.burnCertificate
       .entries()
       .then(bindKeys(["account", "id"]));
 
+    const burnCertificatesWithMeta = await Promise.all(
+      burnCertificates.map(async (item) => {
+        const meta = await fetchMetadataAsset(item.id);
+
+        return {
+          ...meta,
+          burnedAmount: item.value,
+          account: item.account,
+        };
+      }),
+    );
+
     dispatch({
       type: "setCertificates",
-      payload: burnCertificates,
+      payload: burnCertificatesWithMeta,
     });
     toggleLoading();
   }, [api, isCustodian]);

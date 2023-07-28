@@ -6,6 +6,8 @@ import InputNumber from "../../ui/InputNumber/InputNumber";
 
 import useAssetStore from "../../hooks/useAssetStore";
 
+import buildAcronym from "../../utils/acronym";
+
 const formItems = [
   // project info
   <Form.Item
@@ -190,14 +192,6 @@ const formItems = [
   </Form.Item>,
   <Divider key="ERU">Emission reduction units</Divider>,
   <Form.Item
-    key="assetName"
-    label="Asset name"
-    name="Asset name"
-    rules={[{ required: true }]}
-  >
-    <Input />
-  </Form.Item>,
-  <Form.Item
     key="vintage"
     label="Vintage"
     name="Vintage"
@@ -206,28 +200,22 @@ const formItems = [
     <Input />
   </Form.Item>,
   <Form.Item
-    key="startingSerialNumber"
-    label="Starting serial number"
-    name="Starting serial number"
-    rules={[{ required: true }]}
+    key="totalIssuanceAmount"
+    label="Total amount of issuance"
+    name="Total amount of issuance"
+    rules={[{ type: "number", required: true, min: 1 }]}
   >
-    <Input
-      suffix={
-        <Tooltip title="Starting serial number of emission reduction units">
-          <InfoCircleOutlined style={{ color: "rgba(0,0,0,.45)" }} />
-        </Tooltip>
-      }
-    />
+    <InputNumber min={1} style={{ width: "100%" }} />
   </Form.Item>,
   <Form.Item
-    key="endingSerialNumber"
-    label="Ending serial number"
-    name="Ending serial number"
+    key="projectTicker"
+    label="Project ticker"
+    name="Project ticker"
     rules={[{ required: true }]}
   >
     <Input
       suffix={
-        <Tooltip title="Ending serial number of emission reduction units">
+        <Tooltip title="Project ticker is a part of asset ticker. Please keep it short and simple. Recommended value is an abbreviation of the project name">
           <InfoCircleOutlined style={{ color: "rgba(0,0,0,.45)" }} />
         </Tooltip>
       }
@@ -240,11 +228,28 @@ const onFinish = (values, submitFunc, storeFunc) => {
   submitFunc(values);
 };
 
+const setProjectTicker = (form, fields) => {
+  const field = fields?.[0];
+  const fieldName = field?.name?.[0];
+
+  if (fieldName === "Project ticker") {
+    const fieldValue = field?.value;
+
+    form.setFieldValue("Project ticker", fieldValue);
+    return;
+  }
+
+  const projectName = form.getFieldValue("Project name");
+  form.setFieldValue("Project ticker", buildAcronym(projectName));
+  form.validateFields(["Project ticker"]);
+};
+
 const FormCreateAssetByData = ({ form, onSubmit, setData }) => (
   <Form
     key="form"
     form={form}
     onFinish={(values) => onFinish(values, onSubmit, setData)}
+    onFieldsChange={(fields) => setProjectTicker(form, fields)}
     labelCol={{ span: 10 }}
   >
     {formItems}

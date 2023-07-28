@@ -7,14 +7,14 @@ import { getCurrentUser } from "../../utils/storage";
 import styles from "./Certificates.module.less";
 import { parseUnits } from "../../utils/converters";
 
-const columns = [
+const defaultColumns = [
   {
-    title: "Asset ID",
-    dataIndex: "id",
+    title: "Asset name",
+    dataIndex: "name",
   },
   {
     title: "Retired amount",
-    dataIndex: "value",
+    dataIndex: "burnedAmount",
     render: (value) => parseUnits(value),
   },
 ];
@@ -37,6 +37,22 @@ const Certificates = () => {
       fetchCertificates();
     }
   }, [isAPIReady]);
+
+  const columns = useMemo(() => {
+    let allColumns = defaultColumns;
+
+    if (isCustodian) {
+      allColumns = [
+        ...defaultColumns,
+        {
+          title: "Caller",
+          dataIndex: "account",
+        },
+      ];
+    }
+
+    return allColumns;
+  }, [isCustodian]);
 
   return (
     <Container justify="start">

@@ -36,10 +36,13 @@ const Asset = () => {
       projectId = metaInfo.symbol.replace(/EVR_CARBONCER_(\d+)_\w+/i, "$1");
     }
 
+    const registry = mode === "assetByProject" ? "CERCARBONO" : "GDP";
+
     await pinProjectToIPFS({
       projectId,
       mode,
       assetData,
+      registry,
       assetId: id,
       serialNumber,
       amountOfUnits,
@@ -89,14 +92,14 @@ const Asset = () => {
         </Form.Item>
         <Form.Item wrapperCol={{ span: 24 }}>
           <Button htmlType="submit" block type="primary">
-            Save file
+            Save metadata and send order
           </Button>
         </Form.Item>
       </Form>
       <Spin spinning={loading} />
       {url && (
         <a target="__blank" href={url}>
-          Go to file
+          Open metadata file
         </a>
       )}
     </Container>

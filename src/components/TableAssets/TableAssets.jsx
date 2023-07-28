@@ -123,7 +123,9 @@ const TableAssets = ({
         expandedRowRender: (record) => (
           <>
             <div style={{ margin: 10 }}>
-              <span style={{ margin: 6 }}>Asset ID: {record.id}</span>
+              <span style={{ margin: 6 }}>
+                Blockchain Asset ID: {record.id}
+              </span>
               <CopyOutlined
                 className={styles.copyIcon}
                 onClick={() => {
@@ -134,7 +136,7 @@ const TableAssets = ({
             </div>
             <div style={{ margin: 10 }}>
               <span style={{ margin: 6 }}>
-                Symbol: {record.metadata.symbol}
+                Ticker: {record.metadata.symbol}
               </span>
               <CopyOutlined
                 className={styles.copyIcon}
