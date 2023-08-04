@@ -110,7 +110,7 @@ const Layout = ({ children }) => {
         <Content className={styles.content}>{children}</Content>
       </BaseLayout>
       <Footer className={styles.footer}>
-        © {date.getFullYear()} Evercity UG
+        © {date.getFullYear()} Green Digital Platform
       </Footer>
     </BaseLayout>
   );
