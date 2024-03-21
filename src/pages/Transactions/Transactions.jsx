@@ -9,35 +9,36 @@ import { getCurrentUser } from "../../utils/storage";
 
 import styles from "./Transactions.module.less";
 
-const MONITORING_BASE_URL = "https://api.polkaholic.io/account/extrinsics";
+const MONITORING_BASE_URL =
+  "https://api.subquery.network/sq/nova-wallet/nova-wallet-dao-ipci";
 const EXPLORER_BASE_URL =
   "https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fkusama.rpc.ipci.io#/explorer/query";
 
 const columns = [
   {
-    title: "Chain name",
-    dataIndex: "chainName",
+    title: "Module",
+    render: (data) => data.extrinsic.module,
   },
   {
     title: "Method",
-    dataIndex: "method",
-  },
-  {
-    title: "Fee",
-    render: (data) => `${data.fee} ${data.chainSymbol}`,
+    render: (data) => data.extrinsic.call,
   },
   {
     title: "Date",
-    render: (data) => dayjs.unix(data.ts).format("DD.MM.YYYY HH:mm"),
+    render: (data) => dayjs.unix(data.timestamp).format("DD.MM.YYYY HH:mm"),
   },
   {
-    title: "See on explorer",
+    title: "Success",
+    render: (data) => (data.extrinsic.success ? "Yes" : "No"),
+  },
+  {
+    title: "See in explorer",
     render: (data) => (
       <Button
         view="action"
         type="primary"
         target="_blank"
-        href={`${EXPLORER_BASE_URL}/${data.blockHash}`}
+        href={`${EXPLORER_BASE_URL}/${data.blockNumber}`}
       >
         Open
       </Button>
@@ -56,21 +57,44 @@ const Transactions = () => {
     }
 
     setLoading(true);
-    fetch(`${MONITORING_BASE_URL}/${address}`, {
-      // headers: {
-      //   Authorization: import.meta.env.VITE_MONITORING_JWT,
-      // },
+    fetch(`${MONITORING_BASE_URL}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        query: `
+          query GetHistoryElements($address: String!) {
+            historyElements(
+              filter: {address: {equalTo: $address}, extrinsic: {contains: {module: "carbonAssets"}}}
+              orderBy: TIMESTAMP_DESC
+            ) {
+              nodes {
+                address
+                blockNumber
+                extrinsic
+                timestamp
+                nodeId
+                id
+              }
+            }
+          }
+        `,
+        variables: {
+          address,
+        },
+      }),
     })
       .then((res) => res.json())
       .then((res) => {
-        const trs = res.data.filter((item) => item.section === "carbonAssets");
+        console.log("res", res);
+        const trs = res.data.historyElements.nodes;
 
         setTransactions(trs);
         setLoading(false);
       })
       .catch((error) => {
         console.error(error);
-        setLoading(false);
       });
   }, [address, transactions, loading]);
 
