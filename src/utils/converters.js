@@ -1,5 +1,5 @@
 export const formatUnits = (unit, decimals = 9) => {
-  return unit * 10 ** decimals;
+  return Math.round(unit * 10 ** decimals);
 };
 
 export const parseUnits = (unit, decimals = 9) => {

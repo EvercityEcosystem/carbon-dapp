@@ -87,7 +87,6 @@ const Transactions = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("res", res);
         const trs = res.data.historyElements.nodes;
 
         setTransactions(trs);
